@@ -14,7 +14,7 @@ LOG_FILE="$LOG_DIR/run-$(date +%Y-%m-%d).log"
 
 echo "[$(date -Iseconds)] Starting ai-daily run..." >> "$LOG_FILE"
 
-python3 src/main.py -c config.yaml "$@" >> "$LOG_FILE" 2>&1
+PYTHONPATH=. python3 src/main.py -c config.yaml "$@" >> "$LOG_FILE" 2>&1
 
 EXIT_CODE=$?
 echo "[$(date -Iseconds)] Exit code: $EXIT_CODE" >> "$LOG_FILE"

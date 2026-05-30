@@ -1,5 +1,11 @@
 import argparse
 import logging
+import sys
+from pathlib import Path
+
+# Allow running from any directory without PYTHONPATH
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from src.logging_setup import setup_logging
 from src.pipeline.stage import PipelineContext
 from src.pipeline.engine import PipelineEngine

@@ -34,7 +34,6 @@ class RSSAdapter:
             feed = retry_call(
                 feedparser.parse,
                 url,
-                timeout=self.timeout,
                 max_attempts=self.retry_attempts,
                 backoff_seconds=self.retry_backoff,
                 retryable_exceptions=_RETRYABLE_RSS_EXCEPTIONS,

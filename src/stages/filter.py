@@ -33,7 +33,7 @@ class FilterStage:
 
     def _score_articles(self, articles: list[Article]) -> list[Article]:
         entries = "\n".join(
-            f"{i+1}. [{a.title}]({a.link}) — {a.source}\n   {a.summary[:200]}"
+            f"{i+1}. [{a.title}]({a.link}) — {a.source}\n   {(a.summary or '')[:200]}"
             for i, a in enumerate(articles)
         )
         prompt = (
@@ -62,7 +62,7 @@ class FilterStage:
             pass
 
         # Fallback: extract JSON array from text
-        match = re.search(r'\[.*\]', response, re.DOTALL)
+        match = re.search(r'\[.*?\]', response, re.DOTALL)
         if match:
             try:
                 data = json.loads(match.group())

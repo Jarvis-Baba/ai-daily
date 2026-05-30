@@ -31,6 +31,29 @@ src/
 └── stages/           # Fetch → Filter → Summarize → Output
 ```
 
+## 定时运行
+
+### 方式一：crontab（推荐）
+
+```bash
+# 每天 07:00 运行
+0 7 * * * /path/to/ai-daily/run.sh
+```
+
+或带断点续跑：
+
+```bash
+0 7 * * * /path/to/ai-daily/run.sh --resume
+```
+
+### 方式二：内置调度器
+
+```bash
+python3 src/scheduler.py -c config.yaml --at 07:00
+```
+
+前台运行，支持 Ctrl+C 优雅退出。
+
 ## 运行测试
 
 ```bash

@@ -25,12 +25,13 @@ def build_llm_adapter(config: AppConfig):
     provider = config.llm.provider
     if provider == "dummy":
         return DummyAdapter()
-    if provider == "openai":
+    if provider == "deepseek" or provider == "openai":
         return OpenAILikeAdapter(
             model=config.llm.model,
             api_key=config.llm.api_key,
             base_url=config.llm.base_url,
             retry_attempts=config.retry.max_attempts,
+            retry_backoff=config.retry.backoff_seconds,
         )
     raise ValueError(f"Unknown LLM provider: {provider}")
 

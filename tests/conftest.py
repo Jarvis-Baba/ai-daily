@@ -20,10 +20,10 @@ retry:
   max_attempts: 3
   backoff_seconds: 1
 llm:
-  provider: dummy
-  model: dummy
-  api_key: ""
-  base_url: null
+  provider: deepseek
+  model: deepseek-chat
+  api_key: sk-test-key
+  base_url: https://api.deepseek.com
 filter:
   top_n: 5
   min_score: 6

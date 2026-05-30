@@ -19,8 +19,8 @@ def test_load_config_parses_fetch(config_file):
 
 def test_load_config_parses_llm(config_file):
     cfg = load_config(config_file)
-    assert cfg.llm.provider == "dummy"
-    assert cfg.llm.model == "dummy"
+    assert cfg.llm.provider == "deepseek"
+    assert cfg.llm.model == "deepseek-chat"
 
 
 def test_load_config_parses_filter(config_file):

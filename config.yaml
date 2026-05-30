@@ -8,10 +8,10 @@ fetch:
   max_articles_per_feed: 20
 
 llm:
-  provider: dummy
-  model: dummy
-  api_key: ""
-  base_url: null
+  provider: deepseek
+  model: deepseek-chat
+  api_key: ${DEEPSEEK_API_KEY}
+  base_url: https://api.deepseek.com
 
 retry:
   max_attempts: 3

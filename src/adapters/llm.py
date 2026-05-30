@@ -1,4 +1,14 @@
+import logging
+import socket
+import urllib.error
 from typing import Protocol, runtime_checkable
+
+from openai import OpenAI
+from src.retry import retry_call
+
+logger = logging.getLogger(__name__)
+
+_RETRYABLE_LLM_EXCEPTIONS = (urllib.error.URLError, OSError, socket.timeout)
 
 
 @runtime_checkable
@@ -19,7 +29,7 @@ class DummyAdapter:
 
 
 class OpenAILikeAdapter:
-    """OpenAI-compatible API adapter. For Phase 2 use."""
+    """OpenAI-compatible API adapter (DeepSeek, OpenAI, etc.)."""
 
     def __init__(
         self,
@@ -27,22 +37,34 @@ class OpenAILikeAdapter:
         api_key: str,
         base_url: str | None = None,
         retry_attempts: int = 3,
+        retry_backoff: float = 2.0,
     ):
         self.model = model
         self.api_key = api_key
         self.base_url = base_url
         self.retry_attempts = retry_attempts
+        self.retry_backoff = retry_backoff
+        self._client = OpenAI(
+            api_key=api_key,
+            base_url=base_url or "https://api.deepseek.com",
+        )
 
     def chat(self, messages: list[dict[str, str]], **kwargs) -> str:
-        # Phase 2: wrap the API call with retry_call() for network resilience.
-        # Example pattern:
-        #   import urllib.error, socket
-        #   from src.retry import retry_call
-        #   return retry_call(
-        #       self._do_api_call, messages, **kwargs,
-        #       max_attempts=self.retry_attempts,
-        #       backoff_seconds=2.0,
-        #       retryable_exceptions=(urllib.error.URLError, OSError, socket.timeout),
-        #       logger=logging.getLogger(__name__),
-        #   )
-        raise NotImplementedError("OpenAILikeAdapter requires Phase 2 implementation")
+        return retry_call(
+            self._do_chat,
+            messages,
+            max_attempts=self.retry_attempts,
+            backoff_seconds=self.retry_backoff,
+            retryable_exceptions=_RETRYABLE_LLM_EXCEPTIONS,
+            logger=logger,
+            **kwargs,
+        )
+
+    def _do_chat(self, messages: list[dict[str, str]], **kwargs) -> str:
+        response = self._client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=kwargs.get("temperature", 0.7),
+            max_tokens=kwargs.get("max_tokens", 2000),
+        )
+        return response.choices[0].message.content

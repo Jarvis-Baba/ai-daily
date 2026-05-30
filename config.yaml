@@ -1,0 +1,30 @@
+feeds:
+  - name: "Hacker News"
+    url: "https://hnrss.org/frontpage"
+    enabled: true
+
+fetch:
+  timeout: 30
+  max_articles_per_feed: 20
+
+llm:
+  provider: dummy
+  model: dummy
+  api_key: ""
+  base_url: null
+
+filter:
+  top_n: 10
+  min_score: 6
+
+output:
+  dir: "./output"
+  filename: "morning-{date}.md"
+  template: |
+    # AI 早报 — {date}
+
+    ## 今日要闻
+    {items}
+
+    ---
+    > 生成于 {timestamp}

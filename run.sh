@@ -7,6 +7,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# Load .env if it exists
+[ -f .env ] && set -a && source .env && set +a
+
 LOG_DIR="./logs"
 mkdir -p "$LOG_DIR"
 

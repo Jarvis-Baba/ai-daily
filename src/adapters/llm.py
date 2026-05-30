@@ -44,13 +44,16 @@ class OpenAILikeAdapter:
         self.base_url = base_url
         self.retry_attempts = retry_attempts
         self.retry_backoff = retry_backoff
+        self.calls: int = 0
+        self.prompt_tokens: int = 0
+        self.completion_tokens: int = 0
         self._client = OpenAI(
             api_key=api_key,
             base_url=base_url or "https://api.deepseek.com",
         )
 
     def chat(self, messages: list[dict[str, str]], **kwargs) -> str:
-        return retry_call(
+        result = retry_call(
             self._do_chat,
             messages,
             max_attempts=self.retry_attempts,
@@ -59,6 +62,7 @@ class OpenAILikeAdapter:
             logger=logger,
             **kwargs,
         )
+        return result
 
     def _do_chat(self, messages: list[dict[str, str]], **kwargs) -> str:
         response = self._client.chat.completions.create(
@@ -67,4 +71,15 @@ class OpenAILikeAdapter:
             temperature=kwargs.get("temperature", 0.7),
             max_tokens=kwargs.get("max_tokens", 2000),
         )
+        if response.usage:
+            self.calls += 1
+            self.prompt_tokens += response.usage.prompt_tokens
+            self.completion_tokens += response.usage.completion_tokens
+            logger.info(
+                "LLM call #%d: prompt=%d completion=%d total=%d tokens",
+                self.calls,
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens,
+                response.usage.total_tokens,
+            )
         return response.choices[0].message.content

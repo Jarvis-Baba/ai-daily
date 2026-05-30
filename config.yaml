@@ -32,3 +32,4 @@ output:
 
     ---
     > 生成于 {timestamp}
+    {cost}

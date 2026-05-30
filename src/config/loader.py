@@ -58,6 +58,22 @@ class AppConfig:
 _ENV_VAR_RE = re.compile(r"\$\{(\w+)\}")
 
 
+def _load_dotenv(dotenv_path: Path) -> None:
+    """Load KEY=VALUE pairs from a .env file into os.environ. No-op if file doesn't exist."""
+    if not dotenv_path.exists():
+        return
+    with open(dotenv_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key and key not in os.environ:  # don't override existing env
+                os.environ[key] = value
+
+
 def _substitute_env_vars(value: str) -> str:
     def _replace(match):
         var_name = match.group(1)
@@ -79,6 +95,9 @@ def load_config(path: str) -> AppConfig:
     config_path = Path(path)
     if not config_path.exists():
         raise FileNotFoundError(f"Config file not found: {path}")
+
+    # Load .env file if it exists (before env var substitution)
+    _load_dotenv(config_path.parent / ".env")
 
     with open(config_path) as f:
         raw = yaml.safe_load(f)

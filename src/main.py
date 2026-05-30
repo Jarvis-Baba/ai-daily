@@ -1,5 +1,6 @@
 import argparse
 import logging
+from src.logging_setup import setup_logging
 from src.pipeline.stage import PipelineContext
 from src.pipeline.engine import PipelineEngine
 from src.config.loader import load_config, AppConfig
@@ -49,6 +50,8 @@ def run_pipeline(engine: PipelineEngine, ctx: PipelineContext) -> PipelineContex
 
 
 def main():
+    setup_logging()
+
     parser = argparse.ArgumentParser(description="AI Daily — Morning Brief Generator")
     parser.add_argument("--config", "-c", default="config.yaml", help="Path to config.yaml")
     args = parser.parse_args()

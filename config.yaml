@@ -33,3 +33,8 @@ output:
     ---
     > 生成于 {timestamp}
     {cost}
+
+content:
+  fetch_fulltext: true
+  timeout: 8
+  max_chars: 3000

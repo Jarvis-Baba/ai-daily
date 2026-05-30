@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import os
 import re
 from pathlib import Path
@@ -46,6 +46,13 @@ class OutputConfig:
 
 
 @dataclass
+class ContentConfig:
+    fetch_fulltext: bool = True
+    timeout: int = 8
+    max_chars: int = 3000
+
+
+@dataclass
 class AppConfig:
     feeds: list[FeedConfig]
     fetch: FetchConfig
@@ -53,6 +60,7 @@ class AppConfig:
     llm: LLMConfig
     filter: FilterConfig
     output: OutputConfig
+    content: ContentConfig = field(default_factory=ContentConfig)
 
 
 _ENV_VAR_RE = re.compile(r"\$\{(\w+)\}")
@@ -110,6 +118,7 @@ def load_config(path: str) -> AppConfig:
     llm = LLMConfig(**raw.get("llm", {}))
     filter_cfg = FilterConfig(**raw.get("filter", {}))
     output = OutputConfig(**raw.get("output", {}))
+    content = ContentConfig(**raw.get("content", {}))
 
     return AppConfig(
         feeds=feeds,
@@ -118,4 +127,5 @@ def load_config(path: str) -> AppConfig:
         llm=llm,
         filter=filter_cfg,
         output=output,
+        content=content,
     )

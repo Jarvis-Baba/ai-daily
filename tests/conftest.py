@@ -31,6 +31,10 @@ output:
   dir: "./output"
   filename: "morning-{date}.md"
   template: "# AI Morning Brief — {date}\\n\\n{items}"
+content:
+  fetch_fulltext: true
+  timeout: 8
+  max_chars: 3000
 """
 
 

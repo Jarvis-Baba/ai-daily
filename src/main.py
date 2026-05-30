@@ -48,8 +48,8 @@ def build_pipeline(config: AppConfig, rss_adapter: RSSAdapter | None = None):
     ])
 
 
-def run_pipeline(engine: PipelineEngine, ctx: PipelineContext) -> PipelineContext:
-    return engine.run(ctx)
+def run_pipeline(engine: PipelineEngine, ctx: PipelineContext, resume: bool = False) -> PipelineContext:
+    return engine.run(ctx, resume=resume)
 
 
 def main():
@@ -57,6 +57,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="AI Daily — Morning Brief Generator")
     parser.add_argument("--config", "-c", default="config.yaml", help="Path to config.yaml")
+    parser.add_argument("--resume", action="store_true", help="Resume from last checkpoint")
     args = parser.parse_args()
 
     logger.info("Loading config: %s", args.config)
@@ -68,7 +69,7 @@ def main():
     ctx.set("output_dir", config.output.dir)
     ctx.set("output_template", config.output.template)
 
-    result = run_pipeline(engine, ctx)
+    result = run_pipeline(engine, ctx, resume=args.resume)
     logger.info("Brief saved to: %s", result.get("output_path"))
 
 

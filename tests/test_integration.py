@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from datetime import datetime
 from src.main import build_pipeline, run_pipeline
 from src.pipeline.stage import PipelineContext
-from src.config.loader import AppConfig, FeedConfig, FetchConfig, LLMConfig, FilterConfig, OutputConfig
+from src.config.loader import AppConfig, FeedConfig, FetchConfig, LLMConfig, FilterConfig, OutputConfig, RetryConfig
 from src.models.article import RawArticle
 
 
@@ -26,6 +26,7 @@ def test_full_pipeline_integration():
             FeedConfig(name="FeedB", url="https://b.com/rss", enabled=True),
         ],
         fetch=FetchConfig(timeout=30, max_articles_per_feed=10),
+        retry=RetryConfig(max_attempts=3, backoff_seconds=1),
         llm=LLMConfig(provider="dummy", model="dummy", api_key=""),
         filter=FilterConfig(top_n=3, min_score=4),
         output=OutputConfig(
@@ -68,6 +69,7 @@ def test_build_pipeline_returns_4_stages():
     config = AppConfig(
         feeds=[FeedConfig(name="F", url="https://f.com/rss", enabled=True)],
         fetch=FetchConfig(),
+        retry=RetryConfig(),
         llm=LLMConfig(provider="dummy", model="dummy", api_key=""),
         filter=FilterConfig(),
         output=OutputConfig(),

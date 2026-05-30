@@ -19,6 +19,12 @@ class FetchConfig:
 
 
 @dataclass
+class RetryConfig:
+    max_attempts: int = 3
+    backoff_seconds: float = 1.0
+
+
+@dataclass
 class LLMConfig:
     provider: str = "dummy"
     model: str = "dummy"
@@ -43,6 +49,7 @@ class OutputConfig:
 class AppConfig:
     feeds: list[FeedConfig]
     fetch: FetchConfig
+    retry: RetryConfig
     llm: LLMConfig
     filter: FilterConfig
     output: OutputConfig
@@ -80,6 +87,7 @@ def load_config(path: str) -> AppConfig:
 
     feeds = [FeedConfig(**f) for f in raw.get("feeds", [])]
     fetch = FetchConfig(**raw.get("fetch", {}))
+    retry = RetryConfig(**raw.get("retry", {}))
     llm = LLMConfig(**raw.get("llm", {}))
     filter_cfg = FilterConfig(**raw.get("filter", {}))
     output = OutputConfig(**raw.get("output", {}))
@@ -87,6 +95,7 @@ def load_config(path: str) -> AppConfig:
     return AppConfig(
         feeds=feeds,
         fetch=fetch,
+        retry=retry,
         llm=llm,
         filter=filter_cfg,
         output=output,

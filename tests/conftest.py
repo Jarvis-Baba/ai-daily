@@ -16,6 +16,9 @@ feeds:
 fetch:
   timeout: 30
   max_articles_per_feed: 10
+retry:
+  max_attempts: 3
+  backoff_seconds: 1
 llm:
   provider: dummy
   model: dummy

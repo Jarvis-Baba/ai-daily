@@ -24,6 +24,7 @@ def build_llm_adapter(config: AppConfig):
             model=config.llm.model,
             api_key=config.llm.api_key,
             base_url=config.llm.base_url,
+            retry_attempts=config.retry.max_attempts,
         )
     raise ValueError(f"Unknown LLM provider: {provider}")
 
@@ -33,6 +34,8 @@ def build_pipeline(config: AppConfig, rss_adapter: RSSAdapter | None = None):
         rss_adapter = RSSAdapter(
             timeout=config.fetch.timeout,
             max_articles=config.fetch.max_articles_per_feed,
+            retry_attempts=config.retry.max_attempts,
+            retry_backoff=config.retry.backoff_seconds,
         )
 
     llm = build_llm_adapter(config)

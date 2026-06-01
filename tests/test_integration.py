@@ -61,11 +61,12 @@ def test_full_pipeline_integration():
         assert os.path.exists(output_path)
 
         content = open(output_path).read()
-        assert "AI Morning Brief" in content
-        assert "AI News" in content or "Market" in content
+        assert "AI Daily Report" in content
+        assert ("## 1. 🧭 Executive Judgment" in content
+                or "## 1. Judgment" in content)
 
 
-def test_build_pipeline_returns_4_stages():
+def test_build_pipeline_returns_8_stages():
     config = AppConfig(
         feeds=[FeedConfig(name="F", url="https://f.com/rss", enabled=True)],
         fetch=FetchConfig(),
@@ -75,4 +76,4 @@ def test_build_pipeline_returns_4_stages():
         output=OutputConfig(),
     )
     pipeline = build_pipeline(config)
-    assert len(pipeline._stages) == 4
+    assert len(pipeline._stages) == 8

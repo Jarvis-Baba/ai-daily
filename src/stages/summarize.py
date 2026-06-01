@@ -2,8 +2,6 @@ import logging
 from datetime import date
 from src.pipeline.stage import PipelineContext
 from src.adapters.llm import LLMAdapter
-from src.adapters.content_fetcher import fetch_content
-from src.config.loader import ContentConfig
 from src.models.article import Article, Brief, BriefItem
 
 logger = logging.getLogger(__name__)
@@ -15,8 +13,6 @@ class SummarizeStage:
 
     def process(self, ctx: PipelineContext) -> PipelineContext:
         articles: list[Article] = ctx.get("articles", [])
-        config = ctx.get("config")
-        content_cfg = config.content if config else None
 
         if not articles:
             ctx.set("brief", Brief(date=date.today(), items=[]))
@@ -24,7 +20,7 @@ class SummarizeStage:
 
         items = []
         for a in articles:
-            digest = self._generate_digest(a, content_cfg)
+            digest = self._generate_digest(a)
             items.append(BriefItem(
                 title=a.title,
                 source=a.source,
@@ -37,36 +33,30 @@ class SummarizeStage:
         ctx.set("brief", brief)
         return ctx
 
-    def _generate_digest(self, article: Article,
-                         content_cfg: ContentConfig | None = None) -> str:
-        # Attempt to fetch full text if enabled
-        fetch_enabled = content_cfg.fetch_fulltext if content_cfg else True
-        timeout = content_cfg.timeout if content_cfg else 8
-        max_chars = content_cfg.max_chars if content_cfg else 3000
-
-        full_text = ""
-        if fetch_enabled:
-            full_text = fetch_content(article.link, timeout=timeout, max_chars=max_chars)
+    def _generate_digest(self, article: Article) -> str:
+        full_text = article.content
 
         if full_text and len(full_text) > 200:
-            # Rich summary from full text
             prompt = (
-                "Write a 2-3 sentence summary in Chinese about this article:\n\n"
-                f"Title: {article.title}\n"
-                f"Content: {full_text[:3000]}"
+                "你是AI行业分析师。针对以下文章输出中文摘要，格式：\n\n"
+                "**发生了什么**：一句话简述事件\n"
+                "**为什么重要**：一句点出关键意义\n"
+                "**影响**：对行业/从业者有什么影响\n\n"
+                "约束：每条不超过150字，不编造文章没说的事。\n\n"
+                f"标题：{article.title}\n"
+                f"正文：{full_text[:3000]}"
             )
         elif article.summary:
-            # Fallback: short summary from RSS blurb
             prompt = (
-                "Summarize in one Chinese sentence:\n\n"
-                f"Title: {article.title}\n"
-                f"Summary: {(article.summary or '')[:500]}"
+                "用一句中文简述以下AI新闻，点出它为什么值得关注：\n\n"
+                f"标题：{article.title}\n"
+                f"摘要：{(article.summary or '')[:500]}"
             )
         else:
-            return article.title  # last resort
+            return article.title
 
         response = self._llm.chat([
-            {"role": "system", "content": "You are a news editor. Reply in Chinese only."},
+            {"role": "system", "content": "You are a tech analyst. Reply in Chinese. Concise."},
             {"role": "user", "content": prompt},
         ])
         return response.strip()

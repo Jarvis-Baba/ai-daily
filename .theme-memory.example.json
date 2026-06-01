@@ -1,0 +1,23 @@
+{
+  "_comment": "Example theme memory seed. Copy to .theme-memory.json to start fresh.",
+  "themes": {
+    "anthropic_scaling": {
+      "keywords": ["anthropic", "claude", "opus", "sonnet"]
+    },
+    "openai_evolution": {
+      "keywords": ["openai", "gpt", "chatgpt", "codex", "operator"]
+    },
+    "ai_hardware": {
+      "keywords": ["gpu", "chip", "groq", "nvidia", "inference", "tpu", "cerebras"]
+    },
+    "agent_stack": {
+      "keywords": ["agent", "mcp", "tool use", "function calling", "autonomous"]
+    },
+    "regulation": {
+      "keywords": ["regulation", "policy", "government", "omb", "compliance", "executive order"]
+    },
+    "opensource_ai": {
+      "keywords": ["open source", "llama", "mistral", "open model", "weights", "fine-tune"]
+    }
+  }
+}

@@ -1,11 +1,80 @@
 feeds:
-  - name: "Hacker News"
-    url: "https://hnrss.org/frontpage"
+  # ═══ Tier 1: 一手信号（不可替代） ═══
+  - name: "arXiv cs.AI"
+    url: "https://rss.arxiv.org/rss/cs.AI"
     enabled: true
+    priority: 1
+  - name: "arXiv cs.CL"
+    url: "https://rss.arxiv.org/rss/cs.CL"
+    enabled: true
+    priority: 1
+  - name: "arXiv cs.LG"
+    url: "https://rss.arxiv.org/rss/cs.LG"
+    enabled: true
+    priority: 1
+  - name: "Google AI Blog"
+    url: "https://blog.research.google/feeds/posts/default"
+    enabled: true
+    priority: 1
+  - name: "Anthropic Research"
+    url: "https://www.anthropic.com/research"
+    enabled: true
+    feed_type: blog
+    priority: 1
+  - name: "OpenAI Blog"
+    url: "https://openai.com/blog/"
+    enabled: true
+    feed_type: blog
+    priority: 1
+  - name: "Meta AI Blog"
+    url: "https://ai.meta.com/blog/"
+    enabled: true
+    feed_type: meta_ai_blog
+    priority: 1
+  # ═══ Tier 2: 核心补充 ═══
+  - name: "Hugging Face Blog"
+    url: "https://huggingface.co/blog/feed.xml"
+    enabled: true
+    priority: 2
+  - name: "HuggingFace Daily Papers"
+    url: "https://huggingface.co/papers"
+    enabled: true
+    feed_type: blog
+    priority: 2
+  - name: "GitHub Blog"
+    url: "https://github.blog/feed/"
+    enabled: true
+    priority: 2
+  - name: "Hacker News"
+    url: "hackernews top --limit 15"
+    enabled: true
+    feed_type: autocli
+    priority: 2
+  - name: "Reddit r/MachineLearning"
+    url: "MachineLearning top week"
+    enabled: true
+    feed_type: reddit_json
+    priority: 2
+  - name: "SEC EDGAR"
+    url: ""
+    enabled: true
+    feed_type: sec
+    priority: 2
+  # ═══ Tier 3: 辅助信号 ═══
+  - name: "GitHub AI Search"
+    url: "stars:>100 topic:llm"
+    enabled: true
+    feed_type: github_search
+    priority: 3
+  - name: "Medium AI"
+    url: "medium feed --topic ai --limit 10"
+    enabled: true
+    feed_type: autocli
+    priority: 3
 
 fetch:
   timeout: 30
-  max_articles_per_feed: 20
+  max_articles_per_feed: 15
 
 llm:
   provider: deepseek
@@ -18,7 +87,7 @@ retry:
   backoff_seconds: 1
 
 filter:
-  top_n: 10
+  top_n: 12
   min_score: 6
 
 output:
@@ -38,3 +107,12 @@ content:
   fetch_fulltext: true
   timeout: 8
   max_chars: 3000
+  routes:
+    - pattern: "arxiv.org"
+      fetchers: ["jina", "firecrawl", "basic"]
+    - pattern: "github.com"
+      fetchers: ["basic", "firecrawl"]
+    - pattern: "mp.weixin.qq.com"
+      fetchers: ["basic"]
+    - pattern: "*"
+      fetchers: ["firecrawl", "jina", "basic"]

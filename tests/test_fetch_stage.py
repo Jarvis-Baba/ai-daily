@@ -82,3 +82,22 @@ def test_fetch_stage_converts_raw_to_article():
     assert a.link == "https://x.com/1"
     assert a.source == "FeedA"
     assert a.summary == "Summary text"
+
+
+def test_fetch_stage_health_marks_feed_type():
+    ctx = PipelineContext()
+    ctx.set("config", MagicMock())
+    feed = MagicMock(name="RedditML", url="MachineLearning top week", enabled=True)
+    feed.priority = 2
+    feed.feed_type = "reddit_json"
+    ctx.get("config").feeds = [feed]
+    ctx.get("config").fetch = MagicMock(timeout=30, max_articles_per_feed=10)
+
+    stage = FetchStage(rss_adapter=MagicMock())
+    stage._rss.fetch.return_value = []
+
+    result = stage.process(ctx)
+    report = result.get("health_report")
+
+    assert report.feeds[0].feed_type == "reddit_json"
+    assert report.feeds[0].status == "degraded"

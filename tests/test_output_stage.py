@@ -31,7 +31,6 @@ def test_output_stage_writes_markdown_file():
         assert os.path.exists(output_path)
 
         content = open(output_path).read()
-        assert "AI Morning Brief" in content
         assert "2026-05-30" in content
         assert "AI News" in content
         assert "FeedA" in content
@@ -69,5 +68,4 @@ def test_output_stage_empty_brief():
         result = stage.process(ctx)
 
         content = open(result.get("output_path")).read()
-        # Empty brief should still produce valid markdown
-        assert "# Brief" in content
+        assert "No articles today" in content

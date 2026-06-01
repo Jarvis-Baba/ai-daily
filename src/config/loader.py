@@ -10,6 +10,8 @@ class FeedConfig:
     name: str
     url: str
     enabled: bool = True
+    feed_type: str = "rss"     # "rss" / "blog" / "autocli" / "sec"
+    priority: int = 2          # 1=critical 2=core 3=supplementary
 
 
 @dataclass
@@ -50,6 +52,7 @@ class ContentConfig:
     fetch_fulltext: bool = True
     timeout: int = 8
     max_chars: int = 3000
+    routes: list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -118,7 +121,13 @@ def load_config(path: str) -> AppConfig:
     llm = LLMConfig(**raw.get("llm", {}))
     filter_cfg = FilterConfig(**raw.get("filter", {}))
     output = OutputConfig(**raw.get("output", {}))
-    content = ContentConfig(**raw.get("content", {}))
+    content_raw = raw.get("content", {})
+    content = ContentConfig(
+        fetch_fulltext=content_raw.get("fetch_fulltext", True),
+        timeout=content_raw.get("timeout", 8),
+        max_chars=content_raw.get("max_chars", 3000),
+        routes=content_raw.get("routes", []),
+    )
 
     return AppConfig(
         feeds=feeds,

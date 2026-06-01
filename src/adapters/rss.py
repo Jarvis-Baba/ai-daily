@@ -26,7 +26,7 @@ class RSSAdapter:
         self.retry_attempts = retry_attempts
         self.retry_backoff = retry_backoff
 
-    def fetch(self, url: str, source_name: str, max_articles: int | None = None) -> list[RawArticle]:
+    def fetch(self, url: str, source_name: str, max_articles: int | None = None, **kwargs) -> list[RawArticle]:
         limit = max_articles if max_articles is not None else self.max_articles
         articles: list[RawArticle] = []
 

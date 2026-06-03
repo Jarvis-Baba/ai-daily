@@ -60,8 +60,17 @@ class StructuralShift:
 
 @dataclass
 class EventLedgerItem:
-    """Classified event. One type only — no mixed categories."""
-    type: str            # capital / capability / behavioral
+    """Classified event. One type only — no mixed categories.
+
+    v2 ontology (6 types):
+      capital         — 融资/估值/投资/收购
+      capability      — 产品发布/模型发布/功能上线
+      behavioral      — 用户/开发者行为变化、采用率迁移
+      research_result — 研究声明/基准测试/论文性能数据
+      governance      — 安全事件/政策变更/合规/开源许可
+      ecosystem       — 合作伙伴/平台战略/行业标准
+    """
+    type: str            # capital / capability / behavioral / research_result / governance / ecosystem
     title: str           # short description (≤30 chars)
     source: str
     link: str
@@ -143,3 +152,4 @@ class InsightBrief:
     risks: list[RiskItem] = field(default_factory=list)
     decision_hooks: list[DecisionHook] = field(default_factory=list)
     today_themes: list[str] = field(default_factory=list)
+    convergence_log: list[dict] = field(default_factory=list)

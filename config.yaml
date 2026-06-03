@@ -116,3 +116,37 @@ content:
       fetchers: ["basic"]
     - pattern: "*"
       fetchers: ["firecrawl", "jina", "basic"]
+
+artifact:
+  enabled: true
+  output_dir: "./output/artifacts"
+  sources:
+    # ── Event-bearing individual articles (high fact density) ──
+    # GitHub Blog: product launches, security incidents, policy changes
+    - "https://github.blog/news-insights/product-news/github-copilot-app-the-agent-native-desktop-experience/"
+    - "https://github.blog/security/investigating-unauthorized-access-to-githubs-internal-repositories/"
+    - "https://github.blog/security/raising-the-bar-quality-shared-responsibility-and-the-future-of-githubs-bug-bounty-program/"
+    - "https://github.blog/ai-and-ml/github-copilot/github-recognized-as-a-leader-in-the-gartner-magic-quadrant-for-enterprise-ai-coding-agents-for-the-third-year-in-a-row/"
+    - "https://github.blog/news-insights/product-news/take-your-local-github-sessions-anywhere/"
+    - "https://github.blog/open-source/building-githubs-next-chapter-in-accessibility/"
+    # Ars Technica: AI industry news/events
+    - "https://arstechnica.com/ai/2026/06/ai-costs-how-much-github-copilot-users-react-to-new-usage-based-pricing-system/"
+    - "https://arstechnica.com/ai/2026/06/meta-ai-support-chatbot-gave-hackers-access-to-notable-instagram-accounts/"
+    # Anthropic official pages
+    - "https://www.anthropic.com/research"
+    - "https://www.anthropic.com/engineering"
+    # OpenAI
+    - "https://openai.com/blog/"
+    # Google
+    - "https://blog.google/technology/ai/"
+    # ── Research claims (verifiable_fact type, not events) ──
+    - "https://arxiv.org/abs/2606.02673"
+    - "https://arxiv.org/abs/2606.02741"
+    - "https://arxiv.org/abs/2606.02750"
+    # Lilian Weng: technical claims
+    - "https://lilianweng.github.io/posts/2024-07-07-hallucination/"
+    - "https://lilianweng.github.io/posts/2024-11-28-reward-hacking/"
+    - "https://lilianweng.github.io/posts/2025-05-01-thinking/"
+  timeout: 15
+  screenshot_enabled: true
+  media_dir: "./output/artifacts/media"

@@ -56,6 +56,16 @@ class ContentConfig:
 
 
 @dataclass
+class ArtifactConfig:
+    enabled: bool = True
+    output_dir: str = "./output/artifacts"
+    sources: list[str] = field(default_factory=list)
+    timeout: int = 15
+    screenshot_enabled: bool = True
+    media_dir: str = "./output/artifacts/media"
+
+
+@dataclass
 class AppConfig:
     feeds: list[FeedConfig]
     fetch: FetchConfig
@@ -64,6 +74,7 @@ class AppConfig:
     filter: FilterConfig
     output: OutputConfig
     content: ContentConfig = field(default_factory=ContentConfig)
+    artifact: ArtifactConfig = field(default_factory=ArtifactConfig)
 
 
 _ENV_VAR_RE = re.compile(r"\$\{(\w+)\}")
@@ -129,6 +140,16 @@ def load_config(path: str) -> AppConfig:
         routes=content_raw.get("routes", []),
     )
 
+    artifact_raw = raw.get("artifact", {})
+    artifact = ArtifactConfig(
+        enabled=artifact_raw.get("enabled", True),
+        output_dir=artifact_raw.get("output_dir", "./output/artifacts"),
+        sources=artifact_raw.get("sources", []),
+        timeout=artifact_raw.get("timeout", 15),
+        screenshot_enabled=artifact_raw.get("screenshot_enabled", True),
+        media_dir=artifact_raw.get("media_dir", "./output/artifacts/media"),
+    )
+
     return AppConfig(
         feeds=feeds,
         fetch=fetch,
@@ -137,4 +158,5 @@ def load_config(path: str) -> AppConfig:
         filter=filter_cfg,
         output=output,
         content=content,
+        artifact=artifact,
     )

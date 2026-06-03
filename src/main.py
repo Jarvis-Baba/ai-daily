@@ -16,6 +16,10 @@ from src.adapters.blog_scraper import CompositeFeedAdapter
 from src.adapters.llm import DummyAdapter, OpenAILikeAdapter
 from src.adapters.content_fetcher import set_router
 from src.adapters.fetchers.router import ContentRouter
+from src.stages.artifact_capture import L0CaptureStage
+from src.stages.evidence_compiler import L1EvidenceStage
+from src.stages.event_clustering import EventClusteringStage, cluster_entropy
+from src.adapters.structural_telemetry import compute_fingerprint, save_fingerprint
 from src.stages.fetch import FetchStage
 from src.stages.filter import FilterStage
 from src.stages.fetch_content import FetchContentStage
@@ -58,6 +62,9 @@ def build_pipeline(config: AppConfig, rss_adapter=None, llm_adapter=None):
         llm_adapter = build_llm_adapter(config)
 
     return PipelineEngine([
+        L0CaptureStage(),
+        L1EvidenceStage(llm_adapter=llm_adapter),
+        EventClusteringStage(),
         FetchStage(rss_adapter=rss_adapter),
         FilterStage(llm_adapter=llm_adapter, top_n=config.filter.top_n, min_score=config.filter.min_score),
         FetchContentStage(),
@@ -101,6 +108,23 @@ def main():
     result = run_pipeline(engine, ctx, resume=args.resume)
     logger.info("Brief saved to: %s", result.get("output_path"))
     logger.info("Fetch stats: %s", router.stats)
+
+    # ── Structural telemetry fingerprint ──
+    evidence = result.get("evidence", []) or []
+    clusters = result.get("event_clusters", []) or []
+    orphans = result.get("event_orphans", []) or []
+    insight = result.get("insight_brief")
+    event_count = len(insight.event_ledger) if insight else 0
+
+    fp = compute_fingerprint(
+        evidence_list=evidence,
+        clusters=clusters,
+        orphans=orphans,
+        event_count=event_count,
+        cluster_entropy_fn=cluster_entropy,
+    )
+    base_dir = getattr(getattr(config, "artifact", None), "output_dir", "./output/artifacts")
+    save_fingerprint(fp, base_dir)
 
 
 if __name__ == "__main__":

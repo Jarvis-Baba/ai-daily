@@ -2,6 +2,7 @@ import logging
 from dataclasses import dataclass, field
 from src.pipeline.stage import PipelineContext
 from src.models.article import Article
+from src.adapters.local_inbox import load_signal_inbox_articles
 
 logger = logging.getLogger(__name__)
 
@@ -114,8 +115,25 @@ class FetchStage:
             degrade_level=degrade_level,
         )
 
+        # ── Extra inputs (Signal Inbox P0 export, etc.) ──
+        extra_cfgs = getattr(config, "extra_inputs", None) or []
+        for extra_cfg in extra_cfgs:
+            path = extra_cfg.get("path", "")
+            max_items = extra_cfg.get("max_items", 15)
+            if not path:
+                continue
+            logger.info("Extra input: %s (max %d)", path, max_items)
+            try:
+                extra_articles = load_signal_inbox_articles(path, max_items=max_items)
+                for art in extra_articles:
+                    if art.link not in seen_urls:
+                        seen_urls.add(art.link)
+                        articles.append(art)
+            except Exception as e:
+                logger.warning("Extra input failed: %s — %s", path, e)
+
         ctx.set("health_report", report)
-        logger.info("Fetched %d articles from %d feeds | degrade=%d | %s",
+        logger.info("Fetched %d articles from %d feeds (+extra) | degrade=%d | %s",
                      len(articles), len(config.feeds), degrade_level, report.summary)
         ctx.set("articles", articles)
         return ctx

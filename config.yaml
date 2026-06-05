@@ -150,3 +150,9 @@ artifact:
   timeout: 15
   screenshot_enabled: true
   media_dir: "./output/artifacts/media"
+
+# ── External signal feeds (read-only, feeds into FetchStage) ──
+extra_inputs:
+  - path: "../signal-inbox/data/exports/ai_daily_candidates.json"
+    max_items: 15
+    enabled: true   # set false to disable

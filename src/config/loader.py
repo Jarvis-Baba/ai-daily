@@ -75,6 +75,7 @@ class AppConfig:
     output: OutputConfig
     content: ContentConfig = field(default_factory=ContentConfig)
     artifact: ArtifactConfig = field(default_factory=ArtifactConfig)
+    extra_inputs: list[dict] = field(default_factory=list)
 
 
 _ENV_VAR_RE = re.compile(r"\$\{(\w+)\}")
@@ -150,6 +151,9 @@ def load_config(path: str) -> AppConfig:
         media_dir=artifact_raw.get("media_dir", "./output/artifacts/media"),
     )
 
+    extra_raw = raw.get("extra_inputs", [])
+    extra_inputs = extra_raw if isinstance(extra_raw, list) else []
+
     return AppConfig(
         feeds=feeds,
         fetch=fetch,
@@ -159,4 +163,5 @@ def load_config(path: str) -> AppConfig:
         output=output,
         content=content,
         artifact=artifact,
+        extra_inputs=extra_inputs,
     )

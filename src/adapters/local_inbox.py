@@ -27,28 +27,34 @@ def load_signal_inbox_articles(export_path: str, max_items: int = 15) -> list[Ar
     """
     path = Path(export_path)
     if not path.exists():
-        logger.info("Signal Inbox export not found: %s — skipping", export_path)
+        logger.info("extra_input not found: %s — skipping", export_path)
         return []
 
     try:
         with open(path) as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
-        logger.warning("Failed to read Signal Inbox export: %s", e)
+        logger.warning("Failed to read extra_input: %s", e)
         return []
 
     items = data.get("items", [])
     if not items:
         return []
 
-    logger.info("Signal Inbox: %d P0 candidates available, loading ≤%d",
+    logger.info("extra_input: %d P0 candidates available, loading ≤%d",
                  len(items), max_items)
 
     articles = []
     for item in items[:max_items]:
         published = _parse_date(item.get("published_at", ""))
         summary = item.get("summary", "") or ""
-        source_label = f"[SI] {item.get('source', 'unknown')}"
+        source_system = data.get("source_system", "signal-inbox")
+        prefix_map = {
+            "signal-inbox": "[SI]",
+            "youtube-rss": "[YT]",
+        }
+        prefix = prefix_map.get(source_system, "[EXT]")
+        source_label = f"{prefix} {item.get('source', 'unknown')}"
 
         articles.append(Article(
             title=item.get("title", "Untitled"),
@@ -58,7 +64,7 @@ def load_signal_inbox_articles(export_path: str, max_items: int = 15) -> list[Ar
             source=source_label,
         ))
 
-    logger.info("Signal Inbox: loaded %d articles as extra input", len(articles))
+    logger.info("extra_input: loaded %d articles as extra input", len(articles))
     return articles
 
 

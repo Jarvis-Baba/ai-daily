@@ -99,6 +99,7 @@ def test_real_url_capture():
             sources=["https://www.anthropic.com/research"],
         )
         config.artifact.output_dir = d
+        config.artifact.media_dir = d  # keep screenshots out of the repo's media/
         config.artifact.timeout = 20
 
         stage = L0CaptureStage()
@@ -134,6 +135,7 @@ def test_idempotent_skip():
             sources=["https://www.anthropic.com/research"],
         )
         config.artifact.output_dir = d
+        config.artifact.media_dir = d  # keep screenshots out of the repo's media/
         config.artifact.timeout = 20
 
         # First run

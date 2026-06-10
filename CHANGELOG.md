@@ -3,6 +3,7 @@
 
 | 时间 | 完成的单元 | 产出/落点 | 备注 |
 |---|---|---|---|
+| 2026-06-10 | 修复 6 个失败测试，回归保护恢复 | tests/, pytest.ini | 日期硬编码改动态、Stage 断言改类名列表、2 个网络测试入 integration 分组；src/ 零改动 |
 | 2026-06-10 | E 盘交付改为仅当天增量 + run.sh 错误处理重写 | run.sh | 失败注入 + 双成功路径验证通过；历史膨胀文件夹挂 PLAN.md watchlist |
 | 2026-06-10 | 只读审查落盘 + 五步修复计划 | REVIEW-2026-06-10.md, PLAN.md | 全链路审查（静态+运行验证），逐步授权执行 |
 | 2026-06-10 | 停用 ai-daily-l0.timer（遗留脚手架） | systemd user units | stop+disable 不删除；决策见 DECISIONS.md |

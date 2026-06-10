@@ -66,7 +66,7 @@ def test_full_pipeline_integration():
                 or "## 1. Judgment" in content)
 
 
-def test_build_pipeline_returns_8_stages():
+def test_build_pipeline_stage_composition():
     config = AppConfig(
         feeds=[FeedConfig(name="F", url="https://f.com/rss", enabled=True)],
         fetch=FetchConfig(),
@@ -76,4 +76,23 @@ def test_build_pipeline_returns_8_stages():
         output=OutputConfig(),
     )
     pipeline = build_pipeline(config)
-    assert len(pipeline._stages) == 10  # 8 original + L0CaptureStage + L1EvidenceStage
+    # Change-detector: the exact ordered stage list IS the pipeline contract.
+    # A bare count (the old "== 10") passed silently on stage swaps and went
+    # stale on every addition; deriving the list from build_pipeline itself
+    # would be tautological. If this fails you changed the pipeline — update
+    # this list deliberately and add a CHANGELOG.md line.
+    assert [type(s).__name__ for s in pipeline._stages] == [
+        "L0CaptureStage",
+        "L1EvidenceStage",
+        "EventClusteringStage",
+        "FetchStage",
+        "FilterStage",
+        "FetchContentStage",
+        "ScoringStage",
+        "ThemeStage",
+        "SummarizeStage",
+        "SynthesizeStage",
+        "RoleAssignerStage",
+        "ArticleCompilerStage",
+        "OutputStage",
+    ]

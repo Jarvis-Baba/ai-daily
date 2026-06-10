@@ -1,5 +1,9 @@
 """Tests for L0CaptureStage — config-driven artifact capture."""
 import tempfile
+from datetime import datetime, timezone
+
+import pytest
+
 from src.stages.artifact_capture import L0CaptureStage, _canonicalize, _infer_artifact_type
 from src.pipeline.stage import PipelineContext
 
@@ -86,6 +90,7 @@ def test_infer_defaults_to_blog_post():
     assert _infer_artifact_type("https://openai.com/blog/") == "blog_post"
 
 
+@pytest.mark.integration  # real network — excluded from default run (pytest.ini)
 def test_real_url_capture():
     """Integration: capture a real URL and verify artifact integrity."""
     with tempfile.TemporaryDirectory() as d:
@@ -99,7 +104,9 @@ def test_real_url_capture():
         stage = L0CaptureStage()
         ctx = PipelineContext()
         ctx.set("config", config)
+        dates = {datetime.now(timezone.utc).strftime("%Y%m%d")}
         result = stage.process(ctx)
+        dates.add(datetime.now(timezone.utc).strftime("%Y%m%d"))
 
         refs = result.get("artifact_refs", [])
         artifacts = result.get("artifacts", [])
@@ -108,7 +115,9 @@ def test_real_url_capture():
         assert len(artifacts) >= 1
 
         a = artifacts[0]
-        assert a.artifact_id.startswith("A-20260603-")
+        # Artifact IDs are stamped with the UTC date at capture time —
+        # mirror that instead of hardcoding (20260603 broke after that day).
+        assert any(a.artifact_id.startswith(f"A-{d}-") for d in dates), a.artifact_id
         assert a.content_hash.startswith("sha256:")
         assert len(a.content_hash) == 71  # "sha256:" + 64 hex chars
         assert len(a.raw_content) > 100
@@ -116,6 +125,7 @@ def test_real_url_capture():
         assert a.retrieved_via in ("playwright", "http", "jina"), f"Bad via: {a.retrieved_via}"
 
 
+@pytest.mark.integration  # real network — excluded from default run (pytest.ini)
 def test_idempotent_skip():
     """Second capture of same URL should reuse existing artifact."""
     with tempfile.TemporaryDirectory() as d:

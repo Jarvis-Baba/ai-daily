@@ -1,7 +1,12 @@
 """Tests for L1EvidenceStage — LLM-based artifact-to-evidence extraction."""
 import json
+import math
+from datetime import datetime, timezone
 from unittest.mock import MagicMock
-from src.stages.evidence_compiler import L1EvidenceStage, _parse_json, _build_batches, _build_prompt, _clamp
+from src.stages.evidence_compiler import (
+    L1EvidenceStage, _parse_json, _build_batches, _build_prompt, _clamp,
+    _BATCH_SIZE, _BATCH_CHAR_LIMIT,
+)
 from src.pipeline.stage import PipelineContext
 from src.models.artifact import Artifact
 from src.models.evidence import (
@@ -9,6 +14,14 @@ from src.models.evidence import (
     FactType, VerificationStatus, SourceType,
     infer_source_type, SOURCE_RELIABILITY_DEFAULTS,
 )
+
+
+def utc_today():
+    """Date stamp as the stage generates it (datetime.now(timezone.utc)).
+    Capture before AND after the stage call and accept either, so a run
+    that crosses UTC midnight still passes — the original hardcoded
+    20260603 broke this suite on every later day."""
+    return datetime.now(timezone.utc).strftime("%Y%m%d")
 
 
 def make_artifact(artifact_id="A-20260603-001", source_url="https://example.com/blog",
@@ -101,11 +114,13 @@ def test_evidence_structure_complete():
     stage = L1EvidenceStage(llm_adapter=mock_llm, artifact_base_dir="/tmp/l1-test")
     ctx = PipelineContext()
     ctx.set("artifacts", [make_artifact()])
+    dates = {utc_today()}
     result = stage.process(ctx)
+    dates.add(utc_today())
 
     ev = result.get("evidence", [])[0]
     # Required fields
-    assert ev.evidence_id.startswith("E-20260603-")
+    assert any(ev.evidence_id.startswith(f"E-{d}-") for d in dates), ev.evidence_id
     assert ev.fact_type in ("source_statement", "verifiable_fact")
     assert isinstance(ev.source, EvidenceSource)
     assert ev.source.name
@@ -128,10 +143,12 @@ def test_evidence_id_format():
     stage = L1EvidenceStage(llm_adapter=mock_llm, artifact_base_dir="/tmp/l1-test")
     ctx = PipelineContext()
     ctx.set("artifacts", [make_artifact()])
+    dates = {utc_today()}
     result = stage.process(ctx)
+    dates.add(utc_today())
 
     for ev in result.get("evidence", []):
-        assert ev.evidence_id.startswith("E-20260603-")
+        assert any(ev.evidence_id.startswith(f"E-{d}-") for d in dates), ev.evidence_id
         parts = ev.evidence_id.split("-")
         assert len(parts) == 3
         assert int(parts[-1]) >= 1
@@ -222,13 +239,15 @@ def test_package_building():
     stage = L1EvidenceStage(llm_adapter=mock_llm, artifact_base_dir="/tmp/l1-test")
     ctx = PipelineContext()
     ctx.set("artifacts", [make_artifact()])
+    dates = {utc_today()}
     result = stage.process(ctx)
+    dates.add(utc_today())
 
     packages = result.get("evidence_packages", [])
     assert len(packages) == 1
     pkg = packages[0]
     assert isinstance(pkg, EvidencePackage)
-    assert pkg.package_id.startswith("PKG-20260603-")
+    assert any(pkg.package_id.startswith(f"PKG-{d}-") for d in dates), pkg.package_id
     assert pkg.topic
     assert len(pkg.artifacts) == 1
     assert pkg.artifacts[0] == "A-20260603-001"
@@ -286,12 +305,17 @@ def test_invalid_fact_type_defaults():
 def test_build_batches():
     artifacts = [make_artifact(f"A-{i:03d}", raw_content="x" * 1000) for i in range(12)]
     batches = _build_batches(artifacts)
-    # 12 artifacts, 3 per batch → 4 batches (3 + 3 + 3 + 3)
-    assert len(batches) == 4
-    assert len(batches[0]) == 3
-    assert len(batches[1]) == 3
-    assert len(batches[2]) == 3
-    assert len(batches[3]) == 3
+    # Expectations derive from the implementation constants instead of a
+    # hardcoded split: the original "3 per batch" assumption broke when
+    # _BATCH_SIZE was retuned to 1. Invariants first, exact count second.
+    flat = [a.artifact_id for b in batches for a in b]
+    assert flat == [a.artifact_id for a in artifacts]  # nothing lost/reordered
+    assert all(len(b) <= _BATCH_SIZE for b in batches)
+    for b in batches:
+        if len(b) > 1:
+            assert sum(len(a.raw_content) for a in b) <= _BATCH_CHAR_LIMIT
+    if _BATCH_SIZE * 1000 <= _BATCH_CHAR_LIMIT:  # char limit non-binding here
+        assert len(batches) == math.ceil(len(artifacts) / _BATCH_SIZE)
 
 
 def test_build_prompt():

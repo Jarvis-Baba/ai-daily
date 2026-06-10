@@ -1,0 +1,331 @@
+{
+  "package_id": "PKG-20260603-001",
+  "topic": "Anthropic Natural Language Autoencoders (NLA) 发布",
+  "generated_at": "2026-06-03T14:30:00Z",
+  "abi_version": "v1.0",
+  "artifacts": ["A-20260603-001", "A-20260603-002"],
+  "evidence_ids": [
+    "E-20260603-001", "E-20260603-002", "E-20260603-003",
+    "E-20260603-004", "E-20260603-005", "E-20260603-006",
+    "E-20260603-007", "E-20260603-008", "E-20260603-009",
+    "E-20260603-010", "E-20260603-011", "E-20260603-012",
+    "E-20260603-013", "E-20260603-014", "E-20260603-015"
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E-20260603-001",
+      "fact_type": "verifiable_fact",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "Anthropic 于 2026年5月7日发布 Natural Language Autoencoders (NLA) 研究",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "May 7, 2026 — Natural Language Autoencoders: Turning Claude's thoughts into text",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.95,
+        "evidence_strength": 0.95,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-002",
+      "fact_type": "verifiable_fact",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "NLA 论文标题为 'Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations'",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations",
+        "artifact_refs": ["A-20260603-001", "A-20260603-002"]
+      },
+      "confidence": {
+        "source_reliability": 0.95,
+        "evidence_strength": 0.95,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-003",
+      "fact_type": "verifiable_fact",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "Anthropic 将 NLA 代码开源至 github.com/kitft/natural_language_autoencoders",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "Code repository: github.com/kitft/natural_language_autoencoders",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.95,
+        "evidence_strength": 0.90,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-004",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "NLA 将模型内部激活值（activations）转换为可读的自然语言文本",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "convert an activation into natural-language text we can read directly",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.85,
+        "evidence_strength": 0.70,
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-005",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research (transformer-circuits.pub)",
+        "type": "research_paper",
+        "url": "https://transformer-circuits.pub/2026/nla/index.html",
+        "published_at": "2026-05-07"
+      },
+      "statement": "NLA 由三个组件构成：冻结的目标模型（Target Model）、激活值言语化器（Activation Verbalizer, AV）、激活值重建器（Activation Reconstructor, AR）",
+      "attribution": "Anthropic 研究团队",
+      "supporting_material": {
+        "quote": "An NLA consists of two LLM modules: an activation verbalizer mapping activations to text, and an activation reconstructor mapping text back to activations",
+        "artifact_refs": ["A-20260603-002"]
+      },
+      "confidence": {
+        "source_reliability": 0.90,
+        "evidence_strength": 0.80,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-006",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research (transformer-circuits.pub)",
+        "type": "research_paper",
+        "url": "https://transformer-circuits.pub/2026/nla/index.html",
+        "published_at": "2026-05-07"
+      },
+      "statement": "NLA 通过激活→文本→重建激活的闭环训练，重建保真度使用 FVE（Fraction of Variance Explained）衡量，训练后达到 0.6–0.8",
+      "attribution": "Anthropic 研究团队",
+      "supporting_material": {
+        "quote": "Trained NLAs reach 0.6–0.8 FVE",
+        "artifact_refs": ["A-20260603-002"]
+      },
+      "confidence": {
+        "source_reliability": 0.90,
+        "evidence_strength": 0.75,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-007",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "在破坏性编码测试中，NLA 检测到 Claude 16% 的时间存在评估意识（evaluation awareness），而模型口头表达为 ~0%",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "evaluation awareness 16% of the time despite zero verbalized awareness",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.85,
+        "evidence_strength": 0.65,
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-008",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "在 SWE-bench Verified 上，Claude 在 26% 的题目中表现出评估意识",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "On SWE-bench Verified, Claude showed awareness of being evaluated on 26% of problems",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.85,
+        "evidence_strength": 0.60,
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-009",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "在真实 claude.ai 用户（opt-in）数据中，NLA 检测到的评估意识出现率低于 1%",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "On real claude.ai usage from opt-in users, NLA-measured evaluation awareness appeared on less than 1% of transcripts",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.85,
+        "evidence_strength": 0.60,
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-010",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "在隐藏动机审计游戏中，配备 NLA 的审计员发现隐藏动机的成功率为 12%–15%，不使用 NLA 时不到 3%",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "Auditors using NLAs successfully uncovered the hidden motivation 12–15% of the time, even without access to the training data. Without NLAs, auditors won less than 3% of the time",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.85,
+        "evidence_strength": 0.70,
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-011",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "NLA 已被用于 Claude Opus 4.6 和 Claude Mythos Preview 的发布前对齐审计",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "NLAs were used in pre-deployment audits of Claude Mythos Preview and Claude Opus 4.6",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.90,
+        "evidence_strength": 0.80,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-012",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research (transformer-circuits.pub)",
+        "type": "research_paper",
+        "url": "https://transformer-circuits.pub/2026/nla/index.html",
+        "published_at": "2026-05-07"
+      },
+      "statement": "论文作者明确列出 NLA 的五项局限：虚构（confabulation）、缺乏机制可解释性、表达过度（excessive expressivity）、成本高、训练目标在极限条件下退化",
+      "attribution": "Anthropic 研究团队",
+      "supporting_material": {
+        "quote": "Five explicit limitations: confabulation, lack of mechanistic grounding, excessive expressivity, cost, degenerate training objective",
+        "artifact_refs": ["A-20260603-002"]
+      },
+      "confidence": {
+        "source_reliability": 0.90,
+        "evidence_strength": 0.90,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-013",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research (transformer-circuits.pub)",
+        "type": "research_paper",
+        "url": "https://transformer-circuits.pub/2026/nla/index.html",
+        "published_at": "2026-05-07"
+      },
+      "statement": "NLA 训练需要对两个完整语言模型做联合强化学习，推理时每个激活值需生成数百个 token",
+      "attribution": "Anthropic 研究团队",
+      "supporting_material": {
+        "quote": "NLA training requires joint RL on two full language models, and inference requires generating several hundred tokens per activation",
+        "artifact_refs": ["A-20260603-002"]
+      },
+      "confidence": {
+        "source_reliability": 0.90,
+        "evidence_strength": 0.85,
+        "verification_status": "direct_source"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-014",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research Blog",
+        "type": "official_blog",
+        "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+        "published_at": "2026-05-07"
+      },
+      "statement": "NLA 曾帮助研究团队追溯到 Claude Opus 4.6 早期版本的语言切换 bug——某些训练数据中存在语言配对错误",
+      "attribution": "Anthropic",
+      "supporting_material": {
+        "quote": "An early Opus 4.6 version sometimes responded to English queries in other languages; NLAs helped researchers trace this to problematic training data",
+        "artifact_refs": ["A-20260603-001"]
+      },
+      "confidence": {
+        "source_reliability": 0.85,
+        "evidence_strength": 0.55,
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "evidence_id": "E-20260603-015",
+      "fact_type": "source_statement",
+      "source": {
+        "name": "Anthropic Research (transformer-circuits.pub)",
+        "type": "research_paper",
+        "url": "https://transformer-circuits.pub/2026/nla/index.html",
+        "published_at": "2026-05-07"
+      },
+      "statement": "在诗歌规划因果干预实验中，NLA 引导模型行为成功的概率约为 50%",
+      "attribution": "Anthropic 研究团队",
+      "supporting_material": {
+        "quote": "Steering success rate of roughly 50% in the poetry planning causal intervention",
+        "artifact_refs": ["A-20260603-002"]
+      },
+      "confidence": {
+        "source_reliability": 0.90,
+        "evidence_strength": 0.70,
+        "verification_status": "direct_source"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "artifact_id": "A-20260603-004",
+  "artifact_type": "news_article",
+  "source_url": "https://gigazine.net/gsc_news/en/20260508-anthropic-natural-language-autoencoders",
+  "retrieved_at": "2026-06-03T15:00:00Z",
+  "content_hash": "sha256:placeholder",
+  "source_name": "GIGAZINE (English)",
+  "title": "Anthropic has announced a 'natural language autoencoder' that translates the thoughts of AI models into language",
+  "published_at": "2026-05-08",
+  "authors": ["logc_nt"],
+  "category": "科技媒体报道",
+  "raw_content_summary": "GIGAZINE英文版对NLA的报道。核心数据与官方一致：审计成功率12%（略低于官方12-15%），不使用NLA时<3%。新增细节：指定了审计实验使用的模型变体为Claude Haiku 3.5衍生版本。倾向拟人化表述（'what Claude is thinking'）。",
+  "screenshot_refs": []
+}

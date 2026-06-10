@@ -1,61 +1,45 @@
-# ai-daily
+# ai-daily — AI 行业每日简报生成器
 
-AI 早报生成器。多 RSS 源抓取 → LLM 筛选评分 → LLM 摘要 → Markdown 输出。
+多源抓取 → LLM 筛选评分 → 结构化合成为可行动决策简报，输出到微信公众号。
 
 ## 快速开始
 
 ```bash
-pip install -r requirements.txt
-python3 src/main.py -c config.yaml
+./run.sh            # 完整运行（断点续跑：--resume）
+python3 src/main.py -c config.yaml   # 直接调用主流程
 ```
 
-## 配置
+## 输出结构
 
-编辑 `config.yaml`：
+```
+output/
+├── morning-{date}.md        # Markdown 简报
+├── morning-{date}.ir.json   # Content IR（结构化中间表示）
+├── summary-{date}.txt       # 每日 3 行摘要（给人看的）
+├── articles/{date}/         # V-Kernel 文章 + PNG
+└── artifacts/{date}/        # 抓取原始数据
+```
 
-- `feeds` — RSS 源列表，`enabled: false` 可临时停用
-- `llm.provider` — `dummy`（调试）| `openai`（生产）
-- `filter.top_n` — 最终入选文章数
-- `filter.min_score` — 最低评分阈值（1-10）
-- `output.dir` — 早报输出目录
+输出自动复制到 `E:\Jarvis\Outputs\{date}_AI日报\`。
 
 ## 项目结构
 
 ```
-src/
-├── main.py           # 入口
-├── models/           # 数据模型
-├── config/           # 配置加载
-├── pipeline/         # 管线引擎
-├── adapters/         # RSS/LLM 适配器
-└── stages/           # Fetch → Filter → Summarize → Output
+ai-daily/
+├── src/           # 管线代码（13 Stage：L0Capture → … → Output）
+│   ├── stages/    # 各处理阶段
+│   ├── adapters/  # LLM 适配器
+│   ├── models/    # 数据模型
+│   └── pipeline/  # 管线框架
+├── config.yaml    # RSS 源 + LLM 配置（不入版本控制）
+├── docs/          # 设计文档、ABI Spec、Ontology
+├── tests/         # pytest
+└── run.sh         # systemd timer 入口
 ```
 
-## 定时运行
+## 接手须知
 
-### 方式一：crontab（推荐）
-
-```bash
-# 每天 07:00 运行
-0 7 * * * /path/to/ai-daily/run.sh
-```
-
-或带断点续跑：
-
-```bash
-0 7 * * * /path/to/ai-daily/run.sh --resume
-```
-
-### 方式二：内置调度器
-
-```bash
-python3 src/scheduler.py -c config.yaml --at 07:00
-```
-
-前台运行，支持 Ctrl+C 优雅退出。
-
-## 运行测试
-
-```bash
-python3 -m pytest tests/ -v
-```
+- 先读 STATE.md 了解当前阶段和下一步
+- 规则和架构见 PROJECT.md
+- 关键决策及原因见 DECISIONS.md
+- 历史变更见 CHANGELOG.md

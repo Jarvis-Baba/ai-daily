@@ -18,6 +18,9 @@ EVENT_TYPE_LABELS = {
     "capital": "💰 Capital",
     "capability": "⚡ Capability",
     "behavioral": "👥 Behavioral",
+    "research_result": "🔬 Research",
+    "governance": "⚖️ Governance",
+    "ecosystem": "🌐 Ecosystem",
 }
 
 
@@ -51,6 +54,9 @@ class OutputStage:
         path = os.path.join(output_dir, filename)
         with open(path, "w", encoding="utf-8") as f:
             f.write(md_content)
+
+        if insight and insight.event_ledger:
+            _write_summary(insight, output_dir, date_str)
 
         item_count = len(insight.event_ledger) if insight and insight.event_ledger else len(brief.items)
         logger.info("Brief written to %s (%d items)", path, item_count)
@@ -125,12 +131,13 @@ def _render_event_ledger(insight: InsightBrief) -> str:
         return "_None_\n"
 
     # Group by type
-    groups: dict[str, list] = {"capital": [], "capability": [], "behavioral": []}
+    groups: dict[str, list] = {}
     for e in insight.event_ledger:
         groups.setdefault(e.type, []).append(e)
 
+    type_order = ("capital", "capability", "behavioral", "research_result", "governance", "ecosystem")
     lines = []
-    for type_key in ("capital", "capability", "behavioral"):
+    for type_key in type_order:
         items = groups.get(type_key, [])
         if not items:
             continue
@@ -349,3 +356,36 @@ def _render_cost(ctx: PipelineContext) -> str:
         f"输出 {adapter.completion_tokens:,} tokens | "
         f"预估费用 ¥{cost:.4f}"
     )
+
+
+def _write_summary(insight: InsightBrief, output_dir: str, date_str: str) -> None:
+    """Write a 3-line daily summary for the human consumer."""
+    from collections import Counter
+
+    judgment = (insight.executive_judgment or "_无判断_")[:120]
+
+    sources = Counter(e.source for e in insight.event_ledger)
+    top_sources = ", ".join(s for s, _ in sources.most_common(3))
+
+    hooks = insight.decision_hooks or []
+    top_hook = None
+    for h in hooks:
+        if h.level == "L1":
+            top_hook = h
+            break
+    if top_hook is None and hooks:
+        top_hook = hooks[0]
+
+    lines = [
+        f"今日判断：{judgment}",
+        f"事件量：{len(insight.event_ledger)} 条，主要来自：{top_sources or '_无_'}",
+    ]
+
+    if top_hook:
+        lines.append(f"决策钩子：{len(hooks)} 条，最值得看：{top_hook.action}")
+    else:
+        lines.append("决策钩子：无")
+
+    path = os.path.join(output_dir, f"summary-{date_str}.txt")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")

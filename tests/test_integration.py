@@ -76,4 +76,4 @@ def test_build_pipeline_returns_8_stages():
         output=OutputConfig(),
     )
     pipeline = build_pipeline(config)
-    assert len(pipeline._stages) == 8
+    assert len(pipeline._stages) == 10  # 8 original + L0CaptureStage + L1EvidenceStage

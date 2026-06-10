@@ -27,6 +27,8 @@ from src.stages.scoring import ScoringStage
 from src.stages.theme import ThemeStage
 from src.stages.summarize import SummarizeStage
 from src.stages.synthesize import SynthesizeStage
+from src.stages.role_assigner import RoleAssignerStage
+from src.stages.article_compiler import ArticleCompilerStage
 from src.stages.output import OutputStage
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
@@ -72,6 +74,8 @@ def build_pipeline(config: AppConfig, rss_adapter=None, llm_adapter=None):
         ThemeStage(),
         SummarizeStage(llm_adapter=llm_adapter),
         SynthesizeStage(llm_adapter=llm_adapter),
+        RoleAssignerStage(),
+        ArticleCompilerStage(llm_adapter=llm_adapter),
         OutputStage(),
     ])
 
@@ -125,6 +129,34 @@ def main():
     )
     base_dir = getattr(getattr(config, "artifact", None), "output_dir", "./output/artifacts")
     save_fingerprint(fp, base_dir)
+
+    # ── Daily summary (current-state only, no diff, no drift alert) ──
+    editorial = result.get("editorial_telemetry") or {}
+
+    def _role_icon(count):
+        return "●" if count > 0 else "○"
+
+    role_icons = ""
+    if editorial:
+        ra = editorial.get("role_assignment", {})
+        role_icons = "  " + " ".join(
+            f"{_role_icon(1 if r in ra else 0)} {r}"
+            for r in ["hook", "context", "pivot", "amplifier", "contradiction", "closer"]
+        )
+
+    print(f"""
+{'='*40}
+STRUCTURAL  {'='*40}
+  evidence={fp.evidence_count:>5}  clusters={fp.cluster_count:>3}  orphans={fp.orphan_count:>3}
+  orphan_ratio={fp.orphan_ratio:>6.1%}  entropy={fp.cluster_entropy:>6.2f}  aggregation={fp.aggregation_ratio:>5.1f}
+  event_yield={fp.event_yield:>6.1%}  sources={fp.source_count}
+
+{'='*40}
+EDITORIAL   {'='*40}
+  events={editorial.get('candidate_events','?'):>5}  assigned={editorial.get('selected_events','?'):>3}  unassigned={editorial.get('unassigned_events','?'):>3}
+{role_icons}
+{'='*40}
+""".strip())
 
 
 if __name__ == "__main__":

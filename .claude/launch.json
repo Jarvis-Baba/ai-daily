@@ -1,0 +1,44 @@
+{
+  "version": "0.0.1",
+  "note": "This project has no HTTP dev servers. All entries are batch runners.",
+  "configurations": [
+    {
+      "name": "AI Daily Pipeline",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "src.main", "-c", "config.yaml"],
+      "port": null,
+      "cwd": "/home/jarvis/cc-workspace-real/ai-daily",
+      "env": {"PYTHONPATH": "."}
+    },
+    {
+      "name": "AI Daily Pipeline (resume)",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "src.main", "-c", "config.yaml", "--resume"],
+      "port": null,
+      "cwd": "/home/jarvis/cc-workspace-real/ai-daily",
+      "env": {"PYTHONPATH": "."}
+    },
+    {
+      "name": "Dashboard HTML Render",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["tsx", "load_data.ts"],
+      "port": null,
+      "cwd": "/home/jarvis/cc-workspace-real/ai-daily/dashboard"
+    },
+    {
+      "name": "Python Tests",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "pytest", "tests/", "-v"],
+      "port": null,
+      "cwd": "/home/jarvis/cc-workspace-real/ai-daily",
+      "env": {"PYTHONPATH": "."}
+    },
+    {
+      "name": "Dashboard TS Tests",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["test"],
+      "port": null,
+      "cwd": "/home/jarvis/cc-workspace-real/ai-daily/dashboard"
+    }
+  ]
+}

@@ -19,7 +19,11 @@ class LLMAdapter(Protocol):
 
 
 class DummyAdapter:
-    """Phase 1 no-op adapter. Returns last user message content unchanged."""
+    """No-op adapter. Returns last user message content unchanged."""
+
+    calls: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
 
     def chat(self, messages: list[dict[str, str]], **kwargs) -> str:
         for msg in reversed(messages):

@@ -15,7 +15,7 @@
   - config.yaml **在版本控制中**，API key 经 `${DEEPSEEK_API_KEY}` 占位由 .env 注入（.env 不入库、权限 600）
   - 管线唯一入口链：systemd timer `ai-daily.timer`（用户级，07:00 CST + ≤15min 抖动）→ run.sh → src/main.py → daily_pipeline.py（连字符版 daily-pipeline.py 已删；ai-daily-l0.timer 已停用，见 DECISIONS.md）
   - Theme Memory 在项目根 `.theme-memory.json`（gitignored）
-  - E 盘交付自 2026-06-10 起为仅当天增量；历史膨胀文件夹清理挂 PLAN.md watchlist
+  - E 盘交付为仅当天增量；历史膨胀文件夹已清理（2026-06-10 晚，136MB→8.2MB，各夹仅含当日产物；WSL output/ 持全量归档）
 
 ## 运行概览
 - 简报产出：2026-05-30 ~ 2026-06-10 共 12 份（morning-{date}.md + .ir.json，06-09 起含 summary-{date}.txt）

@@ -3,6 +3,7 @@
 
 | 时间 | 完成的单元 | 产出/落点 | 备注 |
 |---|---|---|---|
+| 2026-06-10 | E 盘历史膨胀文件夹清理（用户授权） | E:\Jarvis\Outputs | 8 夹 136MB→8.2MB，收敛为仅当日产物；WSL output/ 仍持全量归档 |
 | 2026-06-10 | 审查修复轮收尾：文档统一对齐 + 量化验收线 | STATE.md, PROJECT.md, PLAN.md, README.md | 五步全闭环；唯一待办=PLAN watchlist；待 06-11 07:02 三点验证 |
 | 2026-06-10 | 消除 pytest 污染生产 checkpoint（8 处） | tests/test_pipeline_engine.py, tests/test_metrics.py | md5 双重实证零写入；B 扫描残余风险挂 watchlist |
 | 2026-06-10 | 遥测文件名日期对齐本地（join 键修复） | src/adapters/{structural_telemetry,telemetry,telemetry_analyzer}.py | 4 处 UTC→本地；冻结时钟+全链路实跑验证；ID 日期不动挂 watchlist |

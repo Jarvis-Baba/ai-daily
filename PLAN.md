@@ -52,37 +52,44 @@
   （该次因 checkpoint 被测试污染实际全量重跑，见 watchlist 新发现条目）；06-10 早间
   生产数据在 _20260609.json（旧 UTC 命名）。存量文件名按授权不改，接缝随明日运行自愈
 
-## 第 5 步：一次性更新文档 ⬜（待授权）
+## 第 5 步：顺手修复 + 扫描 + 文档统一对齐 ✅（2026-06-10 执行）
 
-- STATE.md 全部漂移修正（至少 4 处错误，含"连字符版非死代码"的错误标注）
-- PROJECT.md：Theme Memory 实际路径、docs/ 与根目录 spec 位置、config.yaml 版本控制状态
-- PROJECT.md 第 6 节追加硬规则：**每次会话结束前 commit + 跑测试 + 同步 STATE**
-- 中途各步不改文档，避免反复漂移
+- A 顺手修复（commit 8a29111）：checkpoint 污染消除。授权点名 test_pipeline_engine.py
+  三处；验收线"checkpoint 零改写"首轮 md5 对比仍 FAIL，溯源出第二个同类污染源
+  test_metrics.py（5 个 engine.run 未设 output_dir），一并修复。实证：全量 pytest 前后
+  checkpoint / .theme-memory.json / 当日简报 md5 三者一致，重复运行 PASS ×2
+- B 只读扫描：默认路径风险面清点完毕，残余项（均为潜伏未触发）入下方 Watchlist
+- C 文档对齐：STATE.md 全面重写（简报 12 份、config.yaml 在 VCS、theme-memory 在项目根、
+  单入口链、五步摘要）；PROJECT.md 修 docs/ 与 spec 位置、Theme Memory 路径、§6 增会话
+  硬纪律；README 修 config.yaml 描述；PLAN 即本文件
 
-## Watchlist（挂起，不在本轮修复范围）
+## 量化验收线（长期不变量，违反即回归）
 
-- **已知未实测分支**：run.sh 三条失败路径中“E 盘可达但交付中途失败”（cp 失败 → fail）未注入验证；
-  注入成本（模拟写入中途失败）高于风险，2026-06-10 验收时确认接受，留作已知项。
-- **Artifact/Evidence ID 的 UTC 日期**（artifact_capture.py:189、evidence_compiler.py:245）：
-  第 4 步遥测对齐时按"只对齐 join 键、不动业务 ID"划界未改。若也要统一为本地日期，
-  需同步改第 3 步写的镜像测试，并接受切换日的当日去重接缝——待用户裁决是否做。
-- **新发现：pytest 污染生产 checkpoint（2026-06-10 第 4 步验证中发现，修复待授权）**：
-  tests/test_pipeline_engine.py 有三个测试跑引擎时未设 output_dir，引擎按默认值
-  "./output" 把 checkpoint 写进真实输出目录——每跑一次 pytest，当日
-  .checkpoint-{date}.json 即被改写为 ['AppendStage']（该文件的 dummy stage 名），
-  其后任何 --resume 退化为全量重跑。今晚 20:08 遥测验证运行即被此污染（简报被 LLM
-  重新生成并覆盖交付，含成本）。19:45/19:47 两次 resume 在 checkpoint 完好时正确
-  全部跳过，证明 resume 跳过语义本身正常。修复为三处补 tmpdir 的小改动（纯测试），
-  待授权。明日 07:02 生产运行不带 --resume，不受此影响。
+1. pytest 默认运行 0 失败（当前 179 passed + 2 integration deselected）
+2. 单测零真实网络访问（integration 标记隔离，`pytest -m integration` 显式跑）
+3. 测试对真实工作区零写入（checkpoint / .theme-memory.json / 当日简报 md5 前后一致；2026-06-10 双重实证）
 
-- **已膨胀的历史 E 盘文件夹**（E:\Jarvis\Outputs\2026-05-30~06-10_AI日报，每个含截至当日的全量历史副本）：
-  删除 Windows 侧数据不可逆，本轮不动。由用户手动清理或单独授权。
+## Watchlist（唯一待办清单）
 
-- **config.yaml 的 18 个固定 artifact URL**（06-04 一次性引入，从未修改）：
-  等用户明确 L0 的观测意图——固定观测集（观察同批页面随时间变化）还是每日新鲜捕获——再决定去留。不影响生产正确性，只影响 L0 数据新鲜度。
-- 校准权重解冻（原 STATE P2，等手动反馈数据）
+### P0 — 有明确时点
+- 2026-06-11 07:02 三点验证：① systemd 环境首跑新 run.sh，E 盘 `2026-06-11_AI日报` 干净增量 + 退出码 0；② 遥测文件名应为 20260611（本地日期首次实战）；③ 简报正常生成
+
+### P1/P2 — 等数据或等裁决
+- E 盘历史膨胀文件夹清理（2026-05-30~06-10 各日期夹含全量历史副本）：删除不可逆，用户手动清或单独授权
+- L0 观测意图裁决 → config.yaml 18 个固定 artifact URL 去留（06-04 一次性引入后零修改）
+- Artifact/Evidence ID 的 UTC 日期是否统一为本地（artifact_capture.py / evidence_compiler.py）：改则需同步镜像测试并接受切换日去重接缝
+- 测试默认路径残余风险（第 5 步 B 扫描，均潜伏未触发——全量 pytest 后 .theme-memory.json md5 不变为证）：
+  - test_synthesize_stage.py 4 处 `SynthesizeStage(llm)` 未传 memory_path（默认项目根 .theme-memory.json）
+  - test_evidence_compiler.py 3 处 `L1EvidenceStage(llm_adapter=...)` 未传 artifact_base_dir（默认 None → 落 config/约定目录；当前仅走空输入早退路径）
+  - test_evidence_compiler.py 固定路径 /tmp/l1-test（不在工作区，但跨运行共享、无清理）
+  - test_artifact_capture.py FakeConfig 默认 output_dir="."（当前仅 skip 路径使用，无写入）
+  - 建议（待授权）：conftest 增加全局守卫 fixture，pytest 结束断言工作区关键文件未变
+- 校准权重解冻（等手动反馈数据积累）
 - Editorial v2 discard 逻辑评估（跑满 30 天后）
-- retry 补 openai SDK 异常类型（原 STATE P1）
+- retry 补全 openai SDK 异常类型
+
+### 已接受的已知项
+- run.sh 三条失败路径中"E 盘可达但交付中途失败"分支未注入验证（注入成本高于风险，2026-06-10 验收时接受）
 
 ## 歧义裁决记录（2026-06-10）
 

@@ -31,7 +31,7 @@ ai-daily/
 │   ├── adapters/  # LLM 适配器
 │   ├── models/    # 数据模型
 │   └── pipeline/  # 管线框架
-├── config.yaml    # RSS 源 + LLM 配置（不入版本控制）
+├── config.yaml    # RSS 源 + LLM 配置（在版本控制中，API key 经 ${DEEPSEEK_API_KEY} 由 .env 注入）
 ├── docs/          # 设计文档、ABI Spec、Ontology
 ├── tests/         # pytest
 └── run.sh         # systemd timer 入口

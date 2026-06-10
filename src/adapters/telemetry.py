@@ -14,7 +14,10 @@ logger = logging.getLogger(__name__)
 
 def write_telemetry(entry: dict, base_dir: str) -> Path | None:
     """Append a telemetry record to today's JSONL file. Returns the file path."""
-    today = datetime.now(timezone.utc).strftime("%Y%m%d")
+    # Filename date is a join key aligned to report_date (local date.today()
+    # in main.py); UTC naming put 07:00 CST runs one day early. The
+    # timestamp field below stays UTC.
+    today = datetime.now().strftime("%Y%m%d")
     telemetry_dir = Path(base_dir) / "telemetry"
     telemetry_dir.mkdir(parents=True, exist_ok=True)
     path = telemetry_dir / f"{today}.jsonl"

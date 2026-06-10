@@ -3,6 +3,8 @@
 
 | 时间 | 完成的单元 | 产出/落点 | 备注 |
 |---|---|---|---|
+| 2026-06-10 | 遥测文件名日期对齐本地（join 键修复） | src/adapters/{structural_telemetry,telemetry,telemetry_analyzer}.py | 4 处 UTC→本地；冻结时钟+全链路实跑验证；ID 日期不动挂 watchlist |
+| 2026-06-10 | 清死代码与一次性产物 ×7 项 | 项目根/src/tests | 每删一项 pytest 全绿；EVIDENCE-PACKAGE-001 按裁决1删除 |
 | 2026-06-10 | 修复 6 个失败测试，回归保护恢复 | tests/, pytest.ini | 日期硬编码改动态、Stage 断言改类名列表、2 个网络测试入 integration 分组；src/ 零改动 |
 | 2026-06-10 | E 盘交付改为仅当天增量 + run.sh 错误处理重写 | run.sh | 失败注入 + 双成功路径验证通过；历史膨胀文件夹挂 PLAN.md watchlist |
 | 2026-06-10 | 只读审查落盘 + 五步修复计划 | REVIEW-2026-06-10.md, PLAN.md | 全链路审查（静态+运行验证），逐步授权执行 |

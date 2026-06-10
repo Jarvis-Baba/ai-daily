@@ -33,7 +33,9 @@ def _bucket_size(content_length: int) -> str:
 
 def analyze_day(telemetry_dir: str, date_str: str | None = None) -> dict:
     """Analyze a single day's telemetry. Returns a stats dict."""
-    date_str = date_str or datetime.now(timezone.utc).strftime("%Y%m%d")
+    # Default to the local date — telemetry filenames are keyed to
+    # report_date (local), see telemetry.py.
+    date_str = date_str or datetime.now().strftime("%Y%m%d")
     path = Path(telemetry_dir) / f"{date_str}.jsonl"
     if not path.exists():
         return {"date": date_str, "total_attempts": 0, "error": "no telemetry file"}
@@ -132,7 +134,7 @@ def analyze_range(telemetry_dir: str, days: int = 7) -> list[dict]:
     """Analyze the last N days of telemetry. Returns list of daily stats dicts."""
     from datetime import timedelta
     results = []
-    today = datetime.now(timezone.utc)
+    today = datetime.now()  # local — matches telemetry filename keys
     for i in range(days):
         d = (today - timedelta(days=i)).strftime("%Y%m%d")
         stats = analyze_day(telemetry_dir, d)

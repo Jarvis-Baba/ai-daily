@@ -181,7 +181,10 @@ def save_fingerprint(fp: StructuralFingerprint, base_dir: str) -> str:
     """Write fingerprint to telemetry dir. Returns file path."""
     out_dir = Path(base_dir) / "telemetry"
     out_dir.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now(timezone.utc).strftime("%Y%m%d")
+    # Dated filenames are join keys aligned to report_date (local date.today()
+    # in main.py); a 07:00 CST run is 23:00 UTC day-1, so UTC here mis-keyed
+    # every fingerprint one day early. Record timestamps stay UTC.
+    ts = datetime.now().strftime("%Y%m%d")
     path = out_dir / f"structural_fingerprint_{ts}.json"
     path.write_text(json.dumps(asdict(fp), indent=2, ensure_ascii=False), encoding="utf-8")
     interp = fp.decomposition.get("interpretation", "")

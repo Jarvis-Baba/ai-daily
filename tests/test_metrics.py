@@ -22,8 +22,9 @@ class _FailingStage:
         raise ValueError("boom")
 
 
-def test_pipeline_engine_records_metrics():
+def test_pipeline_engine_records_metrics(tmp_path):
     ctx = PipelineContext()
+    ctx.set("output_dir", str(tmp_path))  # engine writes a checkpoint per stage; keep it out of real ./output
     ctx.set("articles", [])
     engine = PipelineEngine([
         _CountingStage(10),
@@ -50,8 +51,9 @@ def test_pipeline_engine_records_metrics():
     assert m1.status == "ok"
 
 
-def test_metrics_stage_ok():
+def test_metrics_stage_ok(tmp_path):
     ctx = PipelineContext()
+    ctx.set("output_dir", str(tmp_path))
     ctx.set("articles", [1, 2, 3])
     engine = PipelineEngine([_CountingStage(7)])
     engine.run(ctx)
@@ -64,8 +66,9 @@ def test_metrics_stage_ok():
     assert m.duration_ms >= 0
 
 
-def test_metrics_stage_error():
+def test_metrics_stage_error(tmp_path):
     ctx = PipelineContext()
+    ctx.set("output_dir", str(tmp_path))
     ctx.set("articles", [1])
     engine = PipelineEngine([_FailingStage()])
 
@@ -81,8 +84,9 @@ def test_metrics_stage_error():
     assert m.duration_ms >= 0
 
 
-def test_metrics_includes_timestamps():
+def test_metrics_includes_timestamps(tmp_path):
     ctx = PipelineContext()
+    ctx.set("output_dir", str(tmp_path))
     engine = PipelineEngine([_CountingStage(3)])
     engine.run(ctx)
 
@@ -94,9 +98,10 @@ def test_metrics_includes_timestamps():
     assert m.finished_at >= m.started_at
 
 
-def test_metrics_no_articles_key():
+def test_metrics_no_articles_key(tmp_path):
     """When 'articles' key is not set, items_in/out should be 0."""
     ctx = PipelineContext()
+    ctx.set("output_dir", str(tmp_path))
     engine = PipelineEngine([_CountingStage(4)])
     engine.run(ctx)
 

@@ -153,9 +153,6 @@ artifact:
 
 # ── External signal feeds (read-only, feeds into FetchStage) ──
 extra_inputs:
-  - path: "../signal-inbox/data/exports/ai_daily_candidates.json"
-    max_items: 15
-    enabled: true   # set false to disable
   - path: "../runtime/inbox/youtube-2026-06-06.json"
     max_items: 15
     enabled: true   # YouTube RSS Producer

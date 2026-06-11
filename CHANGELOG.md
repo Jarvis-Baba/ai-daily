@@ -3,6 +3,7 @@
 
 | 时间 | 完成的单元 | 产出/落点 | 备注 |
 |---|---|---|---|
+| 2026-06-11 | 修复轮归档：三点验证通过（Persistent 补跑路径） | PLAN.md, REVIEW-2026-06-10.md | ①③ 全过；② 文件名正确但当日无区分力（保留意见入档）；闭环区间 b6a15a4..本 commit |
 | 2026-06-10 | E 盘历史膨胀文件夹清理（用户授权） | E:\Jarvis\Outputs | 8 夹 136MB→8.2MB，收敛为仅当日产物；WSL output/ 仍持全量归档 |
 | 2026-06-10 | 审查修复轮收尾：文档统一对齐 + 量化验收线 | STATE.md, PROJECT.md, PLAN.md, README.md | 五步全闭环；唯一待办=PLAN watchlist；待 06-11 07:02 三点验证 |
 | 2026-06-10 | 消除 pytest 污染生产 checkpoint（8 处） | tests/test_pipeline_engine.py, tests/test_metrics.py | md5 双重实证零写入；B 扫描残余风险挂 watchlist |

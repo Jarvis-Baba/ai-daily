@@ -1,4 +1,4 @@
-"""Read Signal Inbox P0 export and convert to AI Daily Article objects.
+"""Read external signal export and convert to AI Daily Article objects.
 
 This is a read-only extra input — it does NOT modify the 13-stage pipeline.
 Articles from this source pass through the same Filter / Scoring / Theme /
@@ -48,9 +48,8 @@ def load_signal_inbox_articles(export_path: str, max_items: int = 15) -> list[Ar
     for item in items[:max_items]:
         published = _parse_date(item.get("published_at", ""))
         summary = item.get("summary", "") or ""
-        source_system = data.get("source_system", "signal-inbox")
+        source_system = data.get("source_system", "unknown")
         prefix_map = {
-            "signal-inbox": "[SI]",
             "youtube-rss": "[YT]",
         }
         prefix = prefix_map.get(source_system, "[EXT]")
